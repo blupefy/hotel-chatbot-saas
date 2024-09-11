@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Chatbot SaaS</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+        h1 { color: #333; }
+        #hotelForm, #dataSourceForm { margin-bottom: 20px; }
+        input, button, select { margin: 5px 0; padding: 5px; }
+        #hotelList { list-style-type: none; padding: 0; }
+        #hotelList li { background: #f4f4f4; margin: 5px 0; padding: 10px; }
+        .editBtn, .deleteBtn, .chatBtn, .addSourceBtn { margin-left: 10px; }
+        #chatbot { margin-top: 20px; border: 1px solid #ccc; padding: 10px; }
+        #chatMessages { height: 300px; overflow-y: scroll; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+        #userInput { width: calc(100% - 70px); }
+        .error-message { color: red; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Hotel Chatbot SaaS</h1>
+    <div id="app">
+        <h2>Manage Hotels</h2>
+        <form id="hotelForm">
+            <input type="text" id="hotelName" placeholder="Hotel Name" required>
+            <input type="url" id="hotelWebsite" placeholder="Hotel Website" required>
+            <input type="text" id="hotelDescription" placeholder="Hotel Description">
+            <button type="submit">Add Hotel</button>
+        </form>
+        <div id="errorMessage" class="error-message"></div>
+        <ul id="hotelList"></ul>
+    </div>
+    <div id="dataSourceForm" style="display: none;">
+        <h2>Add Data Source</h2>
+        <select id="sourceType">
+            <option value="url">URL</option>
+            <option value="text">Text</option>
+        </select>
+        <input type="text" id="sourceContent" placeholder="Enter URL or text">
+        <button onclick="addDataSource()">Add Source</button>
+    </div>
+    <div id="chatbot" style="display: none;">
+        <h2>Hotel Chatbot</h2>
+        <div id="chatMessages"></div>
+        <input type="text" id="userInput" placeholder="Type your message here...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script src="/app.js"></script>
+</body>
+</html>
