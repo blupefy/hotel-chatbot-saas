@@ -1,1 +1,0 @@
-{"version":2,"languages":{"nodejs-npm":{"specfileHash":"85973dd4969553faaea1a6f669d2d138","lockfileHash":"dab558d86ae596ee3095ecc327df6853","guessedImports":["@google/generative-ai","mongodb","dotenv","express"],"guessedImportsHash":"ca20b9870ef381bf37ad4f6aa03839a3"}}}

@@ -20,13 +20,7 @@ function displayHotels() {
     hotelList.innerHTML = '';
     hotels.forEach(hotel => {
         const li = document.createElement('li');
-        li.innerHTML = `
-            ${hotel.name} - ${hotel.website}
-            <button class="editBtn" data-id="${hotel._id}">Edit</button>
-            <button class="deleteBtn" data-id="${hotel._id}">Delete</button>
-            <button class="chatBtn" onclick="showChatbot('${hotel._id}')">Chat</button>
-            <button class="addSourceBtn" onclick="showAddDataSource('${hotel._id}')">Add Data Source</button>
-        `;
+        li.innerHTML = `${hotel.name} - ${hotel.website} <button class="editBtn" data-id="${hotel._id}">Edit</button> <button class="deleteBtn" data-id="${hotel._id}">Delete</button> <button class="chatBtn" onclick="showChatbot('${hotel._id}')">Chat</button> <button class="addSourceBtn" onclick="showAddDataSource('${hotel._id}')">Add Data Source</button>`;
         hotelList.appendChild(li);
     });
 }

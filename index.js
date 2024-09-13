@@ -1,8 +1,8 @@
 const express = require('express');
 const { connectToDatabase } = require('./config/database');
 const hotelRoutes = require('./routes/hotels');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { ObjectId } = require('mongodb');
+const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
@@ -11,9 +11,6 @@ const port = process.env.PORT || 3001;
 // Middleware
 app.use(express.json());
 app.use(express.static('public'));
-
-// Initialize the Gemini API client
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 async function startServer() {
   try {
@@ -55,26 +52,31 @@ async function startServer() {
         }
         context += "\n\nPlease use the above information to answer the user's question accurately.";
 
-        console.log('Context being sent to Gemini:', context);
+        console.log('Context being sent to Stack AI:', context);
 
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-        const result = await model.generateContent({
-          contents: [
-            {
-              parts: [
-                { text: context },
-                { text: message }
-              ]
+        const stackAiResponse = await axios.post(
+          'https://api.stack-ai.com/v1/chat/completions',
+          {
+            model: 'gpt-3.5-turbo-16k', // or another model of your choice
+            messages: [
+              { role: 'system', content: context },
+              { role: 'user', content: message }
+            ]
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.STACK_AI_API_KEY}`
             }
-          ]
-        });
+          }
+        );
 
-        console.log('Raw Gemini API response:', result);
+        console.log('Raw Stack AI API response:', stackAiResponse.data);
 
-        const response = result.response;
-        console.log('Processed Gemini API response:', response);
+        const aiReply = stackAiResponse.data.choices[0].message.content;
+        console.log('Processed Stack AI API response:', aiReply);
 
-        res.json({ reply: response.text() });
+        res.json({ reply: aiReply });
       } catch (error) {
         console.error('Detailed chat error:', error);
         res.status(500).json({ 
@@ -83,10 +85,12 @@ async function startServer() {
         });
       }
     });
+
     // Start the server
     app.listen(port, '0.0.0.0', () => {
       console.log(`Server running on port ${port}`);
     });
+
   } catch (error) {
     console.error('Failed to start the server:', error);
     process.exit(1);
