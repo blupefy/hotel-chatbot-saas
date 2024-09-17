@@ -107,6 +107,8 @@ function showChatbot(hotelId) {
     document.getElementById('chatMessages').innerHTML = ''; // Clear previous messages
 }
 
+// ... (previous code remains the same)
+
 async function sendMessage() {
     const userInput = document.getElementById('userInput');
     const message = userInput.value.trim();
@@ -120,11 +122,13 @@ async function sendMessage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message, hotelId: currentHotelId })
             });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
             const data = await response.json();
             console.log('Received chat response:', data);
+
+            if (!response.ok) {
+                throw new Error(data.error || `HTTP error! status: ${response.status}`);
+            }
+
             if (data.reply) {
                 addMessageToChat('Chatbot: ' + data.reply);
             } else {
@@ -132,10 +136,12 @@ async function sendMessage() {
             }
         } catch (error) {
             console.error('Error sending message:', error);
-            addMessageToChat('Chatbot: Sorry, I encountered an error. Please try again later.');
+            addMessageToChat('Chatbot: Sorry, I encountered an error. ' + (error.message || 'Please try again later.'));
         }
     }
 }
+
+// ... (rest of the code remains the same)
 
 function addMessageToChat(message) {
     const chatMessages = document.getElementById('chatMessages');

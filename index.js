@@ -32,6 +32,10 @@ async function startServer() {
         const { message, hotelId } = req.body;
         console.log('Received chat request:', { message, hotelId });
 
+        if (!hotelId) {
+          return res.status(400).json({ error: 'Hotel ID is required' });
+        }
+
         const hotel = await db.collection('hotels').findOne({ _id: new ObjectId(hotelId) });
         console.log('Retrieved hotel data:', hotel);
 
@@ -79,10 +83,30 @@ async function startServer() {
         res.json({ reply: aiReply });
       } catch (error) {
         console.error('Detailed chat error:', error);
-        res.status(500).json({ 
-          error: 'An error occurred while processing your request',
-          details: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.error('Stack AI API error response:', error.response.data);
+          console.error('Stack AI API error status:', error.response.status);
+          res.status(error.response.status).json({ 
+            error: 'Error from Stack AI API',
+            details: error.response.data
+          });
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('No response received from Stack AI API');
+          res.status(500).json({ 
+            error: 'No response from Stack AI API',
+            details: 'The request was made but no response was received'
+          });
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Error setting up request to Stack AI API:', error.message);
+          res.status(500).json({ 
+            error: 'Internal server error',
+            details: error.message
+          });
+        }
       }
     });
 
